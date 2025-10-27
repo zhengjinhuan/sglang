@@ -20,6 +20,9 @@ use super::common::{
 pub struct ResponseTool {
     #[serde(rename = "type")]
     pub r#type: ResponseToolType,
+    // Function tool fields (used when type == "function")
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub function: Option<crate::protocols::common::Function>,
     // MCP-specific fields (used when type == "mcp")
     #[serde(skip_serializing_if = "Option::is_none")]
     pub server_url: Option<String>,
@@ -39,6 +42,7 @@ impl Default for ResponseTool {
     fn default() -> Self {
         Self {
             r#type: ResponseToolType::WebSearchPreview,
+            function: None,
             server_url: None,
             authorization: None,
             server_label: None,
@@ -52,6 +56,7 @@ impl Default for ResponseTool {
 #[derive(Debug, Clone, Deserialize, Serialize)]
 #[serde(rename_all = "snake_case")]
 pub enum ResponseToolType {
+    Function,
     WebSearchPreview,
     CodeInterpreter,
     Mcp,
