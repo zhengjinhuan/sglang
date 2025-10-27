@@ -133,6 +133,13 @@ pub enum ResponseInputOutputItem {
         #[serde(skip_serializing_if = "Option::is_none")]
         status: Option<String>,
     },
+    #[serde(rename = "function_call_output")]
+    FunctionCallOutput {
+        call_id: String,
+        output: String,
+        #[serde(skip_serializing_if = "Option::is_none")]
+        status: Option<String>,
+    },
     #[serde(untagged)]
     SimpleInputMessage {
         content: StringOrContentParts,
@@ -675,6 +682,9 @@ impl GenerationRequest for ResponsesRequest {
                     }
                     ResponseInputOutputItem::FunctionToolCall { arguments, .. } => {
                         Some(arguments.clone())
+                    }
+                    ResponseInputOutputItem::FunctionCallOutput { output, .. } => {
+                        Some(output.clone())
                     }
                 })
                 .collect::<Vec<String>>()
