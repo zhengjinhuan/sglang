@@ -171,8 +171,11 @@ impl McpManager {
             )
             .await?;
 
-        // Store in clients map
-        self.clients.insert(server_key, Arc::clone(&client));
+        // Store in clients map with BOTH the URL key and the server name key
+        // This allows lookup by either URL (for connection pooling) or name (for tool execution)
+        self.clients.insert(server_key.clone(), Arc::clone(&client));
+        self.clients
+            .insert(server_name.clone(), Arc::clone(&client));
 
         // Load server inventory (tools, prompts, resources) for newly connected client
         Self::load_server_inventory(&self.inventory, &server_name, &client).await;
