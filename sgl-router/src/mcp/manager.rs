@@ -159,6 +159,7 @@ impl McpManager {
         }
 
         // Client doesn't exist, create new one via connection pool
+        let server_name = server_config.name.clone();
         let client = self
             .connection_pool
             .get_or_create(
@@ -172,6 +173,9 @@ impl McpManager {
 
         // Store in clients map
         self.clients.insert(server_key, Arc::clone(&client));
+
+        // Load server inventory (tools, prompts, resources) for newly connected client
+        Self::load_server_inventory(&self.inventory, &server_name, &client).await;
 
         Ok(client)
     }
