@@ -784,10 +784,10 @@ pub async fn startup(config: ServerConfig) -> Result<(), Box<dyn std::error::Err
 
     // Start background refresh for all registered static MCP servers
     if let Some(mcp_manager) = app_context.mcp_manager.get() {
-        let refresh_interval = Duration::from_secs(300); // 5 minutes, matches default TTL
+        let refresh_interval = Duration::from_secs(120); // 2 minutes (40% of 5 min TTL)
         let _refresh_handle =
             Arc::clone(mcp_manager).spawn_background_refresh_all(refresh_interval);
-        info!("Started background refresh for all static MCP servers");
+        info!("Started background refresh for all static MCP servers (every 2 minutes)");
     }
 
     let worker_stats = app_context.worker_registry.stats();
